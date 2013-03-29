@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Test</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
+        
+        <style>
+            .complete {
+                color: #bbb;
+                text-decoration: line-through;
+            }
+        </style>
+        
+        <script>
+        
+        //setup
+        var Appointment = Backbone.Model.extend({
+            urlRoot: '/test',
+            defaults: {
+                name: 'None',
+                date: 'Eventually',
+                completed: false
+            },
+            toggleCompleted: function(){
+                if(this.get('completed')){
+                    this.set({completed: false});
+                }
+                else {
+                    this.set({completed: true});
+                }
+                console.log("changed completed to " + this.get('completed'));
+                this.save();
+            }
+        });
+        var AppointmentView = Backbone.View.extend({
+            tagName: 'ul',
+            //className: 'appointments',
+            initialize: function(){
+                this.model.on('change', this.render, this); // rerender when model changes
+                this.model.on('destroy', this.remove, this);
+            },
+            events: {
+                'change input': 'toggleCompleted',
+                'dblclick': 'toggleCompleted',
+            },
+            toggleCompleted: function(){
+                this.model.toggleCompleted();
+            },
+            //template: _.template('<span><%= name %></span>'),
+            template: _.template('<li ' +
+                'class="appointment <% if(completed) print("complete") %>">' +
+                '<input type="checkbox" ' +
+                '<% if(completed) print("checked") %>/>' +
+                '<%= name %></li>'),
+            render: function(){
+                var attributes = this.model.toJSON();
+                this.$el.html(this.template(attributes));
+            },
+            remove: function(){
+                this.$el.remove();
+            }
+        });
+        
+        // now we work
+        var appointment = new Appointment({name: 'Dr. Mark Dickenson', date: 'Aug 20, 2013'});
+        //appointment.on('past-due', function(){
+        //    alert("you're late for something!");
+        //});
+        console.log(appointment.get('name'));
+        
+        var appointmentView = new AppointmentView({model: appointment});
+        appointmentView.render();
+        console.log(appointmentView.el);
+        
+        </script>
+    </head>
+    <body>
+        <div id="content">
+        </div>
+        <script>
+        // don't bootstrap the content onto the page until after the skeleton DOM is loaded
+        $('#content').append( appointmentView.$el);
+        </script>
+    </body>
+</html>
