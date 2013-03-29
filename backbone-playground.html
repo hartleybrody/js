@@ -39,7 +39,7 @@
             tagName: 'ul',
             //className: 'appointments',
             initialize: function(){
-                this.model.on('change', this.render, this); // rerender when model changes
+                this.model.on('change', this.render, this);
                 this.model.on('destroy', this.remove, this);
             },
             events: {
@@ -49,7 +49,6 @@
             toggleCompleted: function(){
                 this.model.toggleCompleted();
             },
-            //template: _.template('<span><%= name %></span>'),
             template: _.template('<li ' +
                 'class="appointment <% if(completed) print("complete") %>">' +
                 '<input type="checkbox" ' +
@@ -65,15 +64,10 @@
         });
         
         // now we work
-        var appointment = new Appointment({name: 'Dr. Mark Dickenson', date: 'Aug 20, 2013'});
-        //appointment.on('past-due', function(){
-        //    alert("you're late for something!");
-        //});
-        console.log(appointment.get('name'));
-        
+        var appointment = new Appointment({name: 'Dr. Mark Dickenson', date: 'Aug 20, 2013'});        
         var appointmentView = new AppointmentView({model: appointment});
         appointmentView.render();
-        console.log(appointmentView.el);
+        //console.log(appointmentView.el);
         
         </script>
     </head>
